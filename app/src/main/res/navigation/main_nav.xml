@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.codelectro.covid19india.ui.main.total.TotalFragment"
+        android:label="fragment_total"
+        tools:layout="@layout/fragment_total" />
+    <fragment
+        android:id="@+id/state"
+        android:name="com.codelectro.covid19india.ui.main.state.StateFragment"
+        android:label="fragment_state"
+        tools:layout="@layout/fragment_state" />
+    <fragment
+        android:id="@+id/prevention"
+        android:name="com.codelectro.covid19india.ui.main.prevention.PreventionFragment"
+        android:label="fragment_prevention"
+        tools:layout="@layout/fragment_prevention" />
+</navigation>
