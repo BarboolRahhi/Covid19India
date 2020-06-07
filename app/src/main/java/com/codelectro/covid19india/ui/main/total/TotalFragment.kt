@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.codelectro.covid19india.R
 import com.codelectro.covid19india.models.Total
 import com.codelectro.covid19india.ui.main.MainActivity
-import com.codelectro.covid19india.ui.toast
 import com.codelectro.covid19india.util.ApiResult
 import kotlinx.android.synthetic.main.fragment_total.*
 import javax.inject.Inject

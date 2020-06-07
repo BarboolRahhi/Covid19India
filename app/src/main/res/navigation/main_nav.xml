@@ -14,10 +14,24 @@
         android:id="@+id/state"
         android:name="com.codelectro.covid19india.ui.main.state.StateFragment"
         android:label="fragment_state"
-        tools:layout="@layout/fragment_state" />
+        tools:layout="@layout/fragment_state" >
+        <action
+            android:id="@+id/action_state_to_districtFragment"
+            app:destination="@id/districtFragment" />
+    </fragment>
     <fragment
         android:id="@+id/prevention"
         android:name="com.codelectro.covid19india.ui.main.prevention.PreventionFragment"
         android:label="fragment_prevention"
         tools:layout="@layout/fragment_prevention" />
+    <fragment
+        android:id="@+id/districtFragment"
+        android:name="com.codelectro.covid19india.ui.main.state.DistrictFragment"
+        android:label="DistrictFragment"
+        tools:layout="@layout/fragment_district">
+        <argument
+            android:name="name"
+            app:argType="string"
+            android:defaultValue="default" />
+    </fragment>
 </navigation>

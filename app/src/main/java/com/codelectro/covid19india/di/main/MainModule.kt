@@ -2,7 +2,9 @@ package com.codelectro.covid19india.di.main
 
 import android.app.Application
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.codelectro.covid19india.network.MainApi
+import com.codelectro.covid19india.ui.main.state.DistrictRecyclerAdapter
 import com.codelectro.covid19india.ui.main.state.StateRecyclerAdapter
 import dagger.Module
 import dagger.Provides
@@ -26,13 +28,19 @@ object MainModule {
 
     @JvmStatic
     @Provides
-    fun provideAdapter(): StateRecyclerAdapter {
+    fun provideStateAdapter(): StateRecyclerAdapter {
         return StateRecyclerAdapter()
     }
 
     @JvmStatic
     @Provides
-    fun provideLayoutManager(application: Application): LinearLayoutManager {
+    fun provideDistrictAdapter(): DistrictRecyclerAdapter {
+        return DistrictRecyclerAdapter()
+    }
+
+    @JvmStatic
+    @Provides
+    fun provideLayoutManager(application: Application): RecyclerView.LayoutManager {
         return LinearLayoutManager(application)
     }
 
