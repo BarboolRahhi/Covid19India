@@ -13,16 +13,17 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class StateViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
+class DistrictViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
 
     companion object {
-        private const val TAG = "TotalViewModel"
+        private const val TAG = "DistrictViewModel"
     }
 
-    private var _state = MutableLiveData<ApiResult<List<State>?>>()
-    val state: LiveData<ApiResult<List<State>?>>
-        get() = _state
+    private var _districts = MutableLiveData<ApiResult<List<District>?>>()
+    val districts: LiveData<ApiResult<List<District>?>>
+        get() = _districts
 
+    private var stateCode: String = ""
 
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext
@@ -30,24 +31,28 @@ class StateViewModel @Inject constructor(private val repository: MainRepository)
 
     private val scope = CoroutineScope(coroutineContext)
 
-    init {
-        Log.d(TAG, "OnViewModelInit: working...")
-        getStates()
+
+    fun setStateCode(code: String) {
+        stateCode = code
     }
 
-    private fun getStates() {
-        scope.launch {
-            val apiResult = repository.getStates()
-            _state.value = apiResult
-        }
+    private fun getDistricts() {
+        Log.d(TAG, "getDistricts: called")
+        if (stateCode.isNotEmpty())
+            scope.launch {
+                _districts.value = repository.getDistricts(stateCode)
+            }
     }
 
-    fun refreshStatesData() {
-        getStates()
+
+    fun refreshDistrictsData() {
+        getDistricts()
     }
 
     override fun onCleared() {
         super.onCleared()
+        Log.d(TAG, "onCleared: DistrictViewModel")
+        _districts.value = ApiResult.Success(null)
         coroutineContext.cancel()
     }
 }

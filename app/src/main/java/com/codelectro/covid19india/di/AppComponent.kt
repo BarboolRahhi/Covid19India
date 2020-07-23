@@ -4,7 +4,9 @@ import android.app.Application
 import com.codelectro.covid19india.di.main.MainComponent
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component( modules = [AppModule::class, SubComponentModule::class])
 interface AppComponent {
 

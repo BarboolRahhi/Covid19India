@@ -6,6 +6,7 @@ import com.codelectro.covid19india.ui.main.state.StateFragment
 import com.codelectro.covid19india.ui.main.total.TotalFragment
 import dagger.Subcomponent
 
+@ActivityScope
 @Subcomponent( modules = [MainModule::class, MainViewModelModule::class])
 interface MainComponent {
 

@@ -41,17 +41,17 @@ class DistrictRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemView.stateName.text = district.name
 
             if (district.confirmed == null)
-                itemView.confirmedCase.text = "No case"
+                itemView.confirmedCase.text = "No Data"
             else
                 itemView.confirmedCase.text = district.confirmed.toString()
 
             if (district.recovered == null)
-                itemView.recoveredCase.text = "No case"
+                itemView.recoveredCase.text = "No Data"
             else
                 itemView.recoveredCase.text = district.recovered.toString()
 
             if (district.deaths == null)
-                itemView.deathCase.text = "No Death"
+                itemView.deathCase.text = "No Data"
             else
                 itemView.deathCase.text = district.deaths.toString()
 

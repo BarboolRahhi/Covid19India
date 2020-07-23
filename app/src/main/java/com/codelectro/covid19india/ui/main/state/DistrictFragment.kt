@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,9 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.codelectro.covid19india.R
 import com.codelectro.covid19india.models.District
 import com.codelectro.covid19india.ui.main.MainActivity
+import com.codelectro.covid19india.ui.showToast
 import com.codelectro.covid19india.util.ApiResult
 import com.codelectro.covid19india.util.VerticalSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_district.*
+import kotlinx.android.synthetic.main.fragment_district.progress_bar
+import kotlinx.android.synthetic.main.fragment_district.recycleView
+import kotlinx.android.synthetic.main.fragment_district.refresh
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -35,9 +38,10 @@ class DistrictFragment : Fragment() {
     @Inject
     lateinit var adapter: DistrictRecyclerAdapter
 
-    lateinit var viewModel: StateViewModel
+    private lateinit var viewModel: DistrictViewModel
 
     lateinit var name: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,22 +59,35 @@ class DistrictFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this, viewModelFactory).get(StateViewModel::class.java)
-
-        initRecycleView()
-
         arguments?.let {
             val args = DistrictFragmentArgs.fromBundle(requireArguments())
             name = args.name
             Log.d(TAG, "onViewCreated: $name")
         }
 
-        showProgressBar(true)
-        viewModel.getDistricts(name).observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "onViewCreated: ")
-                execute(it)
-        })
+        viewModel = ViewModelProvider(this, viewModelFactory).get(DistrictViewModel::class.java)
 
+        initRecycleView()
+
+        showProgressBar(true)
+        observeSubscriber()
+
+        refresh.setOnClickListener {
+            viewModel.refreshDistrictsData()
+            showProgressBar(true)
+            showRefreshBtn(false)
+        }
+
+    }
+
+    private fun observeSubscriber() {
+        viewModel.setStateCode(name)
+        viewModel.refreshDistrictsData()
+        viewModel.districts.removeObservers(viewLifecycleOwner)
+        viewModel.districts.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "onViewCreated: ")
+            execute(it)
+        })
     }
 
     private fun execute(apiResult: ApiResult<List<District>?>) {
@@ -79,15 +96,22 @@ class DistrictFragment : Fragment() {
                 apiResult.value?.let { adapter.setStateList(it) }
                 Log.d(TAG, "execute: ${apiResult.value}")
                 showProgressBar(false)
-                if (apiResult.value?.isEmpty()!!)
-                    showNoDataFound(true)
+                showRefreshBtn(false)
+                apiResult.value?.let {
+                    if (it.isEmpty())
+                        showNoDataFound(true)
+                }
+
             }
             is ApiResult.GenericError -> {
                 showProgressBar(false)
+                showRefreshBtn(false)
                 Log.d(MainActivity.TAG, "onCreate: ${apiResult.errorMessage}")
             }
             ApiResult.NetworkError -> {
                 showProgressBar(false)
+                showRefreshBtn(true)
+                requireActivity().showToast("Network Problem!")
                 Log.d(MainActivity.TAG, "onCreate: NetworkError")
             }
         }
@@ -111,6 +135,13 @@ class DistrictFragment : Fragment() {
             no_data_found.visibility = View.VISIBLE
         else
             no_data_found.visibility = View.INVISIBLE
+    }
+
+    private fun showRefreshBtn(isVisible: Boolean) {
+        if (isVisible)
+            refresh.visibility = View.VISIBLE
+        else
+            refresh.visibility = View.INVISIBLE
     }
 
 }

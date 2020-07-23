@@ -10,12 +10,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 object AppModule {
 
+    @Singleton
     @JvmStatic
     @Provides
+    @Named("dataRetro")
     fun provideRetrofitBuilder(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -24,4 +28,18 @@ object AppModule {
 
     }
 
+    @Singleton
+    @JvmStatic
+    @Provides
+    @Named("graphRetro")
+    fun provideRetrofitGraphBuilder(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_GRAPH)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    }
+
+
+    
 }
