@@ -1,29 +1,27 @@
 package com.codelectro.covid19india.ui.main
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-import com.codelectro.covid19india.BaseApplication
 import com.codelectro.covid19india.R
-import com.codelectro.covid19india.di.main.MainComponent
+import com.codelectro.covid19india.ui.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "MainActivity "
     }
 
-    lateinit var mainComponent: MainComponent
+    val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        mainComponent = (applicationContext as BaseApplication).appComponent
-            .mainComponent().create()
-        mainComponent.inject(this)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

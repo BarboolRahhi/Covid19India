@@ -1,48 +1,71 @@
 package com.codelectro.covid19india.repository
 
-import com.codelectro.covid19india.di.main.ActivityScope
-import com.codelectro.covid19india.models.*
-import com.codelectro.covid19india.network.GraphApi
+import com.codelectro.covid19india.db.MainDao
+import com.codelectro.covid19india.entity.District
 import com.codelectro.covid19india.network.MainApi
-import com.codelectro.covid19india.util.ApiResult
-import kotlinx.coroutines.CoroutineDispatcher
-import java.util.stream.Collector
-import java.util.stream.Collectors
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.codelectro.covid19india.util.DataState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 
-
-@ActivityScope
-class MainRepository @Inject constructor(
-    private val dispatcher: CoroutineDispatcher,
+class MainRepository constructor(
     private val mainApi: MainApi,
-    private val graphApi: GraphApi
+    private val mainDao: MainDao
 ) {
 
-    suspend fun getSummary() : ApiResult<Total?> {
-        return safeApiCall(dispatcher) {
-            mainApi.getSummary()
+    fun setCovidData(): Flow<DataState<Boolean>> = flow {
+        emit(DataState.Loading)
+        try {
+            val response = mainApi.getCovidData()
+            Timber.d("Data: Fetching Data...")
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    mainDao.deleteAllCasesSeries()
+                    mainDao.insertAllStateWise(it.statewise)
+                    mainDao.insertAllCasesSeries(it.cases_time_series.takeLast(30))
+                    emit(DataState.Success(true))
+                }
+            }
+        } catch (e: Exception) {
+            emit(DataState.Error(e))
         }
     }
 
-    suspend fun getStates() : ApiResult<List<State>?> {
-        return safeApiCall(dispatcher) {
-            mainApi.getStates()
+    fun setDistrictData(): Flow<DataState<Boolean>> = flow {
+        emit(DataState.Loading)
+        try {
+            val response = mainApi.getDistrictData()
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    val list = ArrayList<District>()
+                    val map = response.body()!!.map
+                    for (stateEntry in map) {
+                        for (districtEntry in stateEntry.value.districtData!!) {
+                            list.add(
+                                District(
+                                    keyId = "${districtEntry.key}${stateEntry.value.statecode}",
+                                    statecode = stateEntry.value.statecode,
+                                    name = districtEntry.key,
+                                    active = districtEntry.value.active,
+                                    confirmed = districtEntry.value.confirmed,
+                                    deceased = districtEntry.value.deceased,
+                                    recovered = districtEntry.value.recovered
+                                )
+                            )
+                        }
+                    }
+                    mainDao.insertAllDistricts(list)
+                    emit(DataState.Success(true))
+                }
+            }
+        } catch (e: Exception) {
+            emit(DataState.Error(e))
         }
     }
 
-    suspend fun getDistricts(stateId: String) : ApiResult<List<District>?> {
-        return safeApiCall(dispatcher) {
-            mainApi.getStates()
-                .filter { state -> state.id == stateId }
-                .flatMap { state ->  state.districts }
-                .toList()
-        }
-    }
+    fun getCasesSeriesData() = mainDao.getAllCasesSeries()
+    fun getStateWiseData() = mainDao.getAllStateWise()
+    fun getTotalData() = mainDao.getTotalData("TT")
+    fun getDistrictByStateCode(code: String) = mainDao.getDistrictByStateCode(code)
 
-    suspend fun getGraphData(): ApiResult<List<GraphData>?> {
-        return safeApiCall(dispatcher) {
-            graphApi.getGraphData()
-        }
-    }
 }

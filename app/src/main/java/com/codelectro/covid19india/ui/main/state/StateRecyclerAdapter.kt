@@ -6,7 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.codelectro.covid19india.R
-import com.codelectro.covid19india.models.State
+import com.codelectro.covid19india.entity.StateWise
+import com.codelectro.covid19india.ui.formatNumber
 import kotlinx.android.synthetic.main.state_item.view.*
 
 class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -15,7 +16,7 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private const val TAG = "StateRecyclerAdapter"
     }
 
-    private var list: List<State> = ArrayList<State>();
+    private var list: List<StateWise> = ArrayList<StateWise>()
 
     private lateinit var listener: ClickListener
 
@@ -28,7 +29,7 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return list.size
     }
 
-    fun setStateList(list: List<State>){
+    fun setStateList(list: List<StateWise>){
         this.list = list
         notifyDataSetChanged()
     }
@@ -49,14 +50,15 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class StateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(state: State) {
+        fun bind(state: StateWise) {
 
             itemView.apply {
                 stateName.text = state.state
-                confirmedCase.text = state.confirmed.toString()
-                activeCase.text = state.active.toString()
-                recoveredCase.text = state.recovered.toString()
-                deathCase.text = state.deaths.toString()
+                confirmedCase.text = state.confirmed.formatNumber()
+                activeCase.text = state.active.formatNumber()
+                recoveredCase.text = state.recovered.formatNumber()
+                deathCase.text = state.deaths.formatNumber()
+                lastUpdateDate.text = "Last Update date: ${state.lastupdatedtime}"
             }
 
         }
@@ -64,6 +66,6 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     interface ClickListener {
-        fun onClick(view: View, state: State)
+        fun onClick(view: View, state: StateWise)
     }
 }

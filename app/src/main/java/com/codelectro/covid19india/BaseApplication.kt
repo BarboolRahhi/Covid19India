@@ -1,21 +1,15 @@
 package com.codelectro.covid19india
 
 import android.app.Application
-import com.codelectro.covid19india.di.AppComponent
-import com.codelectro.covid19india.di.DaggerAppComponent
+import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
-class BaseApplication : Application() {
-
-    lateinit var appComponent: AppComponent
+@HiltAndroidApp
+class BaseApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initAppComponent()
-    }
 
-    private fun initAppComponent() {
-        appComponent = DaggerAppComponent
-            .builder()
-            .application(this).build()
+        Timber.plant(Timber.DebugTree())
     }
 }

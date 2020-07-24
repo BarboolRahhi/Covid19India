@@ -9,7 +9,7 @@ import java.util.*
 class GraphDateValueFormatter : ValueFormatter() {
 
     override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-        val pattern = "MM-dd"
+        val pattern = "dd-MMM"
         val simpleDateFormat = SimpleDateFormat(pattern)
         return simpleDateFormat.format(Date(value.toLong())).toString()
     }

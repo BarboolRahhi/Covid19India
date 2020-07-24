@@ -13,20 +13,16 @@ class CustomMarker(context: Context, layoutResource: Int):  MarkerView(context, 
     override fun refreshContent(entry: Entry?, highlight: Highlight?) {
         val valueY = entry?.y?.toDouble() ?: 0.0
         val valueX = entry?.x?.toDouble() ?: 0.0
-        val pattern = "MM-dd-yyyy"
+        val pattern = "dd-MMM"
         val simpleDateFormat = SimpleDateFormat(pattern)
         val date = simpleDateFormat.format(Date(valueX.toLong())).toString()
-        var resText = ""
-        resText = if(valueY.toString().length > 8){
-            "Val: " + valueY.toString().substring(0,7)
-        } else{
-            "Val: $valueY"
-        }
+        var resText = "case: $valueY"
+
         tvValue.text = "$date\n" + resText
         super.refreshContent(entry, highlight)
     }
 
     override fun getOffsetForDrawingAtPoint(xpos: Float, ypos: Float): MPPointF {
-        return MPPointF(-width / 1f, -height - 5f)
+        return MPPointF(-width / 1.3f, -height - 5f)
     }
 }

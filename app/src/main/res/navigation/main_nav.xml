@@ -9,7 +9,16 @@
         android:id="@+id/home"
         android:name="com.codelectro.covid19india.ui.main.total.TotalFragment"
         android:label="fragment_total"
-        tools:layout="@layout/fragment_total" />
+        tools:layout="@layout/fragment_total">
+
+        <action
+            android:id="@+id/homeaction"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+    </fragment>
     <fragment
         android:id="@+id/state"
         android:name="com.codelectro.covid19india.ui.main.state.StateFragment"
@@ -17,13 +26,25 @@
         tools:layout="@layout/fragment_state" >
         <action
             android:id="@+id/action_state_to_districtFragment"
-            app:destination="@id/districtFragment" />
+            app:destination="@id/districtFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/prevention"
         android:name="com.codelectro.covid19india.ui.main.prevention.PreventionFragment"
         android:label="fragment_prevention"
-        tools:layout="@layout/fragment_prevention" />
+        tools:layout="@layout/fragment_prevention" >
+        <action
+            android:id="@+id/preventionaction"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+    </fragment>
     <fragment
         android:id="@+id/districtFragment"
         android:name="com.codelectro.covid19india.ui.main.state.DistrictFragment"
@@ -33,5 +54,12 @@
             android:name="name"
             app:argType="string"
             android:defaultValue="default" />
+        <action
+            android:id="@+id/districtaction"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
 </navigation>

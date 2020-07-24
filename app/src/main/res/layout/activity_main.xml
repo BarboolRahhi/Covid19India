@@ -17,31 +17,32 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|top"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
+            >
             <TextView
+                android:id="@+id/covid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
                 android:text="Covid19"
+                android:layout_centerVertical="true"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
 
             <TextView
+                android:layout_toRightOf="@+id/covid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
                 android:text=".India"
+                android:layout_centerVertical="true"
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
