@@ -10,5 +10,6 @@ class Constants {
         const val NETWORK_ERROR_TIMEOUT = "Network timeout"
         const val UNKNOWN_ERROR = "Unknown error"
         const val MAIN_DATABASE_NAME = "main_db"
+        const val GRAPH_ANIMATION_DURATION = 1000
     }
 }

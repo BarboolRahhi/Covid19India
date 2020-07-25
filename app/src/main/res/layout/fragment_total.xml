@@ -11,6 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:background="@android:color/white"
+        android:layout_marginBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
@@ -20,10 +21,10 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintBottom_toTopOf="@+id/materialCardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
 
         <FrameLayout
@@ -84,12 +85,11 @@
             android:id="@+id/materialCardView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:elevation="6dp"
-            app:cardBackgroundColor="#00d8d6"
             app:cardCornerRadius="10dp"
+            android:elevation="6dp"
             app:layout_constraintEnd_toStartOf="@+id/materialCardView2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stateName">
@@ -98,15 +98,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:background="@color/colorAlpha20BlueSky"
+                android:paddingStart="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="Confirmed Case"
-                    android:textColor="@android:color/white"
+                    android:text="Confirmed"
+                    android:textColor="@color/colorBlueSky"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/deltaConfirmed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90BlueSky"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/confirmedCase"
@@ -114,8 +127,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Loading..."
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp" />
+                    android:textColor="@color/colorBlueSky"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -127,9 +140,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="12dp"
             android:elevation="6dp"
-            app:cardBackgroundColor="#ffce47"
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/materialCardView"
@@ -139,15 +151,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:paddingStart="12dp"
+                android:paddingRight="12dp"
+                android:background="@color/colorAlpha20Gold"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="Active Case"
-                    android:textColor="@android:color/white"
+                    android:text="Active"
+                    android:textColor="@color/colorGold"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90Gold"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/activeCase"
@@ -155,8 +178,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Loading..."
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp" />
+                    android:textColor="@color/colorGold"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -167,10 +190,9 @@
             android:id="@+id/materialCardView3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
-            app:cardBackgroundColor="#05c46b"
             app:cardCornerRadius="10dp"
             android:elevation="6dp"
             app:layout_constraintEnd_toStartOf="@+id/materialCardView4"
@@ -181,24 +203,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:background="@color/colorAlpha20Green"
+                android:paddingStart="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Recovered Case"
+                    android:text="Recovered"
                     android:textSize="16sp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorGreen"
                     android:fontFamily="@font/poppins_regular"
                     />
+
+                <TextView
+                    android:id="@+id/deltaRecovered"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90Green"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/recoveredCase"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Loading..."
-                    android:textSize="24sp"
-                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorGreen"
                     android:fontFamily="@font/poppins_medium"/>
 
             </LinearLayout>
@@ -211,9 +245,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:cardBackgroundColor="#ff4d4d"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
             app:cardCornerRadius="10dp"
             android:elevation="6dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -224,24 +257,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:paddingStart="12dp"
+                android:paddingRight="12dp"
+                android:background="@color/colorAlpha20Red"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Deaths"
                     android:textSize="16sp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorRed"
                     android:fontFamily="@font/poppins_regular"
                     />
+
+                <TextView
+                    android:id="@+id/deltaDeaths"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90Red"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/deathCase"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Loading..."
-                    android:textSize="24sp"
-                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorRed"
                     android:fontFamily="@font/poppins_medium"/>
 
             </LinearLayout>
@@ -249,16 +294,20 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-<!--        <WebView-->
-<!--            android:id="@+id/webView"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/textView3">-->
-
-<!--        </WebView>-->
-
+        <TextView
+            android:id="@+id/lastUpdateDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:text="Last Update Date:"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="#65645F"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView3" />
 
         <TextView
             android:id="@+id/textView3"
@@ -267,20 +316,43 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="Growth trajectories"
-            android:textSize="24sp"
             android:fontFamily="@font/poppins_medium"
+            android:text="Spread Trends"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/lastUpdateDate" />
 
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="parent">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/together"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Together"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/individual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Individual"/>
+
+
+        </com.google.android.material.tabs.TabLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/linear1"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintLeft_toRightOf="parent"
             android:background="@drawable/all_gradient_bg"
@@ -299,18 +371,16 @@
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/linear4"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="260dp"
             android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/linear1"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -331,19 +401,16 @@
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/confirmedLineChart"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
 
-
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/linear2"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="260dp"
             android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/linear4"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -364,21 +431,17 @@
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/recoveredLineChart"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
 
-
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/linear3"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="260dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="30dp"
             app:layout_constraintTop_toBottomOf="@+id/linear2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintLeft_toRightOf="parent"
@@ -398,14 +461,49 @@
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/deathLineChart"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
 
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:checkedButton="@+id/month"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear3">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/beginning"
+                style="@style/IconOnlyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Beginning" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/month"
+                style="@style/IconOnlyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 Month"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/week"
+                style="@style/IconOnlyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 Weeks"
+                />
+
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,8 +1,11 @@
 package com.codelectro.covid19india.ui.main.total
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.TabHost
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.codelectro.covid19india.R
@@ -10,27 +13,28 @@ import com.codelectro.covid19india.entity.CasesSeries
 import com.codelectro.covid19india.entity.StateWise
 import com.codelectro.covid19india.exception.NoInternetException
 import com.codelectro.covid19india.ui.MainViewModel
+import com.codelectro.covid19india.ui.dateTimeFormat
 import com.codelectro.covid19india.ui.formatNumber
 import com.codelectro.covid19india.ui.main.MainActivity
 import com.codelectro.covid19india.ui.showToast
-import com.codelectro.covid19india.util.CustomMarker
-import com.codelectro.covid19india.util.DataState
-import com.codelectro.covid19india.util.GraphDateValueFormatter
+import com.codelectro.covid19india.util.*
+import com.codelectro.covid19india.util.Constants.Companion.GRAPH_ANIMATION_DURATION
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.LargeValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_total.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -43,10 +47,6 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
     }
 
     private lateinit var viewModel: MainViewModel
-
-    private val confirmedEntries = ArrayList<Entry>()
-    private val recoveredEntries = ArrayList<Entry>()
-    private val deathEntries = ArrayList<Entry>()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,6 +78,44 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             }
         })
 
+        isTogetherGraph(true)
+        isIndividualGraph(false)
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                requireContext().showToast(""+tab?.position)
+                when(tab?.position) {
+                    0 -> {
+                        isTogetherGraph(true)
+                        isIndividualGraph(false)
+                    }
+                    1 -> {
+
+                        isTogetherGraph(false)
+                        isIndividualGraph(true)
+                    }
+                }
+            }
+
+        })
+
+    }
+
+    private fun isTogetherGraph(isVisible: Boolean) {
+        linear1.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    private fun isIndividualGraph(isVisible: Boolean) {
+        linear2.visibility = if (isVisible) View.VISIBLE else View.GONE
+        linear3.visibility = if (isVisible) View.VISIBLE else View.GONE
+        linear4.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun subscribeObserver() {
@@ -88,7 +126,24 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             }
         })
 
-        viewModel.getCasesSeriesData().observe(viewLifecycleOwner, Observer {
+        viewModel.getCasesSeriesData(30)
+        toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            when (group.checkedButtonId) {
+                R.id.beginning -> {
+                    viewModel.getCasesSeriesData(-1)
+                }
+                R.id.month -> {
+                    viewModel.getCasesSeriesData(30)
+                }
+                R.id.week -> {
+                    viewModel.getCasesSeriesData(14)
+                }
+            }
+
+        }
+
+
+        viewModel.casesSeries.observe(viewLifecycleOwner, Observer {
             Timber.d("Data: CasesSerises $it")
             setRecoveredGraphData(it)
             setAllGraphData(it)
@@ -100,9 +155,24 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
 
     private fun setAllGraphData(graphDataList: List<CasesSeries>) {
 
-        //lineChart.xAxis.labelRotationAngle = 0f
+        val confirmedEntries = ArrayList<Entry>()
+        val recoveredEntries = ArrayList<Entry>()
+        val deathEntries = ArrayList<Entry>()
+        val monthsArray = ArrayList<String>()
+
+        graphDataList.forEachIndexed { index, casesSeries ->
+            monthsArray.add(casesSeries.date.substring(0, 6))
+            confirmedEntries.add(Entry(index.toFloat(), casesSeries.totalconfirmed.toFloat()))
+            recoveredEntries.add(Entry(index.toFloat(), casesSeries.totalrecovered.toFloat()))
+            deathEntries.add(Entry(index.toFloat(), casesSeries.totaldeceased.toFloat()))
+        }
+
+
+        lineChart.setExtraOffsets(12f, 6f, 12f, 0f)
+
+        lineChart.xAxis.labelRotationAngle = 0f
         lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        lineChart.xAxis.valueFormatter = GraphDateValueFormatter()
+        lineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
 
         lineChart.legend.textColor = Color.parseColor("#1530A5")
 
@@ -122,9 +192,9 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         lineChart.description.text = "Days"
         lineChart.setNoDataText("No Data yet!")
 
-        lineChart.animateX(1500, Easing.EaseInExpo)
+        lineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
-        val markerView = CustomMarker(requireContext(), R.layout.custom_marker)
+        val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         lineChart.marker = markerView
 
         lineChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
@@ -148,17 +218,6 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             override fun onNothingSelected() {}
         })
 
-        val confirmedEntries = ArrayList<Entry>()
-        val recoveredEntries = ArrayList<Entry>()
-        val deathEntries = ArrayList<Entry>()
-
-        graphDataList.forEach {
-            val formatter = SimpleDateFormat("dd MMMM ", Locale.US)
-            val date = formatter.parse(it.date)
-            confirmedEntries.add(Entry(date.time.toFloat(), it.totalconfirmed.toFloat()))
-            recoveredEntries.add(Entry(date.time.toFloat(), it.totalrecovered.toFloat()))
-            deathEntries.add(Entry(date.time.toFloat(), it.totaldeceased.toFloat()))
-        }
 
         val set1: LineDataSet
         val set2: LineDataSet
@@ -167,9 +226,9 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         if (lineChart.data != null &&
             lineChart.data.dataSetCount > 0
         ) {
+            set1 = lineChart.data.getDataSetByIndex(0) as LineDataSet
             set2 = lineChart.data.getDataSetByIndex(1) as LineDataSet
             set3 = lineChart.data.getDataSetByIndex(2) as LineDataSet
-            set1 = lineChart.data.getDataSetByIndex(0) as LineDataSet
             set1.values = confirmedEntries
             set2.values = recoveredEntries
             set3.values = deathEntries
@@ -227,26 +286,19 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
 
     private fun setConfirmedGraphData(graphDataList: List<CasesSeries>) {
 
-        graphDataList.forEach {
-            val formatter = SimpleDateFormat("dd MMMM ", Locale.US)
-            val date = formatter.parse(it.date)
-            confirmedEntries.add(Entry(date.time.toFloat(), it.totalconfirmed.toFloat()))
+        val confirmedEntries = ArrayList<Entry>()
+        val monthsArray = ArrayList<String>()
+
+        graphDataList.forEachIndexed { index, casesSeries ->
+            monthsArray.add(casesSeries.date.substring(0, 6))
+            confirmedEntries.add(Entry(index.toFloat(), casesSeries.totalconfirmed.toFloat()))
         }
 
-        val vl = LineDataSet(confirmedEntries, "Confirmed Cases")
-        vl.setDrawValues(false)
-        vl.setDrawFilled(true)
-        vl.color = Color.parseColor("#6062aeff")
-        vl.setCircleColor(Color.parseColor("#62aeff"))
-        vl.lineWidth = 3f
-        vl.fillColor = Color.parseColor("#62aeff")
-        vl.fillAlpha = 30
-        vl.setDrawCircleHole(false)
-
+        confirmedLineChart.setExtraOffsets(12f, 6f, 12f, 0f)
 
         confirmedLineChart.xAxis.labelRotationAngle = 0f
         confirmedLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        confirmedLineChart.xAxis.valueFormatter = GraphDateValueFormatter()
+        confirmedLineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
 
         confirmedLineChart.legend.textColor = Color.parseColor("#62aeff")
 
@@ -257,7 +309,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         confirmedLineChart.axisLeft.setDrawGridLines(false)
         confirmedLineChart.axisLeft.valueFormatter = LargeValueFormatter()
 
-        confirmedLineChart.data = LineData(vl)
+
 
         confirmedLineChart.axisRight.isEnabled = false
 
@@ -267,20 +319,37 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         confirmedLineChart.description.text = "Days"
         confirmedLineChart.setNoDataText("No Data yet!")
 
-        confirmedLineChart.animateX(1500, Easing.EaseInExpo)
+        confirmedLineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
-        val markerView = CustomMarker(requireContext(), R.layout.custom_marker)
+        val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         confirmedLineChart.marker = markerView
+
+        val vl: LineDataSet
+
+        vl = LineDataSet(confirmedEntries, "Confirmed Cases")
+        vl.setDrawValues(false)
+        vl.setDrawFilled(true)
+        vl.color = Color.parseColor("#6062aeff")
+        vl.setCircleColor(Color.parseColor("#62aeff"))
+        vl.lineWidth = 3f
+        vl.fillColor = Color.parseColor("#62aeff")
+        vl.fillAlpha = 30
+        vl.setDrawCircleHole(false)
+
+        confirmedLineChart.data = LineData(vl)
 
     }
 
     private fun setRecoveredGraphData(graphDataList: List<CasesSeries>) {
 
-        graphDataList?.forEach {
-            val formatter = SimpleDateFormat("dd MMMM ")
-            val date = formatter.parse(it.date)
-            recoveredEntries.add(Entry(date.time.toFloat(), it.totalrecovered!!.toFloat()))
+        val recoveredEntries = ArrayList<Entry>()
+        val monthsArray = ArrayList<String>()
+
+        graphDataList.forEachIndexed { index, casesSeries ->
+            monthsArray.add(casesSeries.date.substring(0, 6))
+            recoveredEntries.add(Entry(index.toFloat(), casesSeries.totalrecovered.toFloat()))
         }
+
 
         val vl = LineDataSet(recoveredEntries, "Recovered Cases")
 
@@ -293,9 +362,11 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         vl.fillAlpha = 30
         vl.setDrawCircleHole(false)
 
+        recoveredLineChart.setExtraOffsets(12f, 6f, 12f, 0f)
+
         recoveredLineChart.xAxis.labelRotationAngle = 0f
         recoveredLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        recoveredLineChart.xAxis.valueFormatter = GraphDateValueFormatter()
+        recoveredLineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
 
         recoveredLineChart.legend.textColor = Color.parseColor("#28a745")
 
@@ -317,20 +388,22 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         recoveredLineChart.description.text = "Days"
         recoveredLineChart.setNoDataText("No Data yet!")
 
-        recoveredLineChart.animateX(1500, Easing.EaseInExpo)
+        recoveredLineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
-        val markerView = CustomMarker(requireContext(), R.layout.custom_marker)
+        val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         recoveredLineChart.marker = markerView
 
     }
 
     private fun setDeathGraphData(graphDataList: List<CasesSeries>) {
+        val monthsArray = ArrayList<String>()
+        val deathEntries = ArrayList<Entry>()
 
-        graphDataList?.forEach {
-            val formatter = SimpleDateFormat("dd MMMM ")
-            val date = formatter.parse(it.date)
-            deathEntries.add(Entry(date.time.toFloat(), it.totaldeceased!!.toFloat()))
+        graphDataList.forEachIndexed { index, casesSeries ->
+            monthsArray.add(casesSeries.date.substring(0, 6))
+            deathEntries.add(Entry(index.toFloat(), casesSeries.totaldeceased.toFloat()))
         }
+
 
         val vl = LineDataSet(deathEntries, "Death Cases")
 
@@ -343,9 +416,11 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         vl.fillAlpha = 30
         vl.setDrawCircleHole(false)
 
+        deathLineChart.setExtraOffsets(12f, 6f, 12f, 0f)
+
         deathLineChart.xAxis.labelRotationAngle = 0f
         deathLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        deathLineChart.xAxis.valueFormatter = GraphDateValueFormatter()
+        deathLineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
 
         deathLineChart.legend.textColor = Color.parseColor("#e23129")
 
@@ -367,13 +442,12 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         deathLineChart.description.text = "Days"
         deathLineChart.setNoDataText("No Data yet!")
 
-        deathLineChart.animateX(1500, Easing.EaseInExpo)
+        deathLineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
-        val markerView = CustomMarker(requireContext(), R.layout.custom_marker)
+        val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         deathLineChart.marker = markerView
 
     }
-
 
     private fun setUI(total: StateWise) {
         total?.let {
@@ -381,6 +455,10 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             activeCase.text = it.active.formatNumber()
             recoveredCase.text = it.recovered.formatNumber()
             deathCase.text = it.deaths.formatNumber()
+            deltaConfirmed.text = "+"+it.deltaconfirmed.formatNumber()
+            deltaRecovered.text = "+"+it.deltarecovered.formatNumber()
+            deltaDeaths.text = "+"+it.deltadeaths.formatNumber()
+            lastUpdateDate.text = "Last update date: " + it.lastupdatedtime!!.dateTimeFormat()
         }
 
     }

@@ -1,8 +1,5 @@
 package com.codelectro.covid19india.ui.main.state
 
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.provider.CalendarContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +8,12 @@ import com.codelectro.covid19india.R
 import com.codelectro.covid19india.entity.District
 import com.codelectro.covid19india.ui.formatNumber
 import kotlinx.android.synthetic.main.district_item.view.*
+import kotlinx.android.synthetic.main.district_item.view.activeCase
+import kotlinx.android.synthetic.main.district_item.view.confirmedCase
+import kotlinx.android.synthetic.main.district_item.view.deathCase
+import kotlinx.android.synthetic.main.district_item.view.recoveredCase
+import kotlinx.android.synthetic.main.district_item.view.stateName
+
 
 
 class DistrictRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -39,11 +42,18 @@ class DistrictRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     class StateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(district: District) {
-            itemView.stateName.text = district.name
-            itemView.confirmedCase.text = district.confirmed.formatNumber()
-            itemView.recoveredCase.text = district.recovered.formatNumber()
-            itemView.deathCase.text = district.deceased.formatNumber()
-            itemView.activeCase.text = district.active.formatNumber()
+            itemView.apply {
+                stateName.text = district.name
+                confirmedCase.text = district.confirmed.formatNumber()
+                recoveredCase.text = district.recovered.formatNumber()
+                deathCase.text = district.deceased.formatNumber()
+                activeCase.text = district.active.formatNumber()
+                deltaConfirmed.text = "+"+district.deltaconfirmed.formatNumber()
+                deltaRecovered.text = "+"+district.deltarecovered.formatNumber()
+                deltaDeaths.text = "+"+district.deltadeaths.formatNumber()
+            }
+
+
         }
     }
 }

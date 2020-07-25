@@ -22,7 +22,7 @@ interface MainDao {
     fun getDistrictByStateCode(code: String): LiveData<List<District>>
 
     @Query("SELECT * FROM cases_series")
-    fun getAllCasesSeries(): LiveData<List<CasesSeries>>
+    suspend fun getAllCasesSeries(): List<CasesSeries>
 
     @Query("SELECT * FROM state_wise WHERE statecode != 'TT' ORDER BY confirmed DESC")
     fun getAllStateWise(): LiveData<List<StateWise>>

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codelectro.covid19india.entity.CasesSeries
 import com.codelectro.covid19india.repository.MainRepository
 import com.codelectro.covid19india.util.DataState
 import kotlinx.coroutines.flow.launchIn
@@ -25,6 +26,10 @@ class MainViewModel @ViewModelInject constructor(
     private val _districtDataSource: MutableLiveData<DataState<Boolean>> = MutableLiveData()
     val districtDataState: LiveData<DataState<Boolean>>
         get() = _districtDataSource
+
+    private val _caseseries: MutableLiveData<List<CasesSeries>> = MutableLiveData()
+    val casesSeries: LiveData<List<CasesSeries>>
+        get() = _caseseries
 
     init {
         setCovidData()
@@ -51,7 +56,15 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    fun getCasesSeriesData() = repository.getCasesSeriesData()
+    fun getCasesSeriesData(limit: Int)  {
+        viewModelScope.launch {
+            repository.getCasesSeriesData(limit)
+                .onEach {
+                    _caseseries.value = it
+                }
+                .launchIn(viewModelScope)
+        }
+    }
     fun getStateWiseData() = repository.getStateWiseData()
     fun getTotalData() = repository.getTotalData()
     fun getDistrictByStateCode(code: String) = repository.getDistrictByStateCode(code)

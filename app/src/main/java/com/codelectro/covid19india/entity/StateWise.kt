@@ -12,5 +12,8 @@ data class StateWise(
     val confirmed: Int = 0,
     val deaths: Int = 0,
     val recovered: Int = 0,
+    val deltarecovered: Int = 0,
+    val deltaconfirmed: Int = 0,
+    val deltadeaths: Int = 0,
     val lastupdatedtime: String? = null
 )

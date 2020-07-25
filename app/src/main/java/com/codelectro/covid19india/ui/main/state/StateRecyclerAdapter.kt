@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.codelectro.covid19india.R
 import com.codelectro.covid19india.entity.StateWise
+import com.codelectro.covid19india.ui.dateTimeFormat
 import com.codelectro.covid19india.ui.formatNumber
 import kotlinx.android.synthetic.main.state_item.view.*
 
@@ -51,14 +52,16 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class StateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(state: StateWise) {
-
             itemView.apply {
                 stateName.text = state.state
                 confirmedCase.text = state.confirmed.formatNumber()
                 activeCase.text = state.active.formatNumber()
                 recoveredCase.text = state.recovered.formatNumber()
                 deathCase.text = state.deaths.formatNumber()
-                lastUpdateDate.text = "Last Update date: ${state.lastupdatedtime}"
+                deltaConfirmed.text = "+"+state.deltaconfirmed.formatNumber()
+                deltaRecovered.text = "+"+state.deltarecovered.formatNumber()
+                deltaDeaths.text = "+"+state.deltadeaths.formatNumber()
+                lastUpdateDate.text = "Last Update date: " + state.lastupdatedtime!!.dateTimeFormat()
             }
 
         }

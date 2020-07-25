@@ -9,14 +9,17 @@
     android:layout_marginEnd="16dp"
     android:id="@+id/cardView"
     android:elevation="6dp"
-    android:translationZ="8dp"
+    android:translationZ="6dp"
     app:cardCornerRadius="10dp">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:paddingTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp">
 
 
         <TextView
@@ -31,16 +34,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:elevation="6dp"
-            app:cardBackgroundColor="#00d8d6"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             app:cardCornerRadius="10dp"
+            android:elevation="6dp"
             app:layout_constraintEnd_toStartOf="@+id/materialCardView2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stateName">
@@ -49,17 +52,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:background="@color/colorAlpha20BlueSky"
                 android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="12dp">
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Confirmed"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorBlueSky"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/deltaConfirmed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90BlueSky"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/confirmedCase"
@@ -67,8 +81,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Loading..."
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp" />
+                    android:textColor="@color/colorBlueSky"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -78,11 +92,10 @@
             android:id="@+id/materialCardView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
             android:elevation="6dp"
-            app:cardBackgroundColor="#ffce47"
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/materialCardView"
@@ -93,16 +106,25 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="12dp">
+                android:paddingRight="12dp"
+                android:background="@color/colorAlpha20Gold"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Active"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorGold"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90Gold"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/activeCase"
@@ -110,8 +132,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Loading..."
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp" />
+                    android:textColor="@color/colorGold"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -122,31 +144,43 @@
             android:id="@+id/materialCardView3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:elevation="6dp"
-            app:cardBackgroundColor="#05c46b"
             app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/materialCardView4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView">
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView"
+            app:layout_constraintVertical_bias="0.6">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/colorAlpha20Green"
                 android:orientation="vertical"
                 android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="12dp">
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                android:paddingRight="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Recovered"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorGreen"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/deltaRecovered"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90Green"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/recoveredCase"
@@ -154,8 +188,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Loading..."
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp" />
+                    android:textColor="@color/colorGreen"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -166,12 +200,13 @@
             android:id="@+id/materialCardView4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="8dp"
             android:elevation="6dp"
-            app:cardBackgroundColor="#ff4d4d"
             app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/materialCardView3"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView2">
@@ -179,18 +214,28 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/colorAlpha20Red"
                 android:orientation="vertical"
                 android:paddingStart="12dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="12dp">
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                android:paddingRight="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Deaths"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorRed"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/deltaDeaths"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/colorAlpha90Red"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/deathCase"
@@ -198,13 +243,14 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Loading..."
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp" />
+                    android:textColor="@color/colorRed"
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
 
         </com.google.android.material.card.MaterialCardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

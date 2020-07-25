@@ -1,6 +1,7 @@
 package com.codelectro.covid19india.repository
 
 import com.codelectro.covid19india.db.MainDao
+import com.codelectro.covid19india.entity.CasesSeries
 import com.codelectro.covid19india.entity.District
 import com.codelectro.covid19india.network.MainApi
 import com.codelectro.covid19india.util.DataState
@@ -22,7 +23,7 @@ class MainRepository constructor(
                 response.body()?.let {
                     mainDao.deleteAllCasesSeries()
                     mainDao.insertAllStateWise(it.statewise)
-                    mainDao.insertAllCasesSeries(it.cases_time_series.takeLast(30))
+                    mainDao.insertAllCasesSeries(it.cases_time_series)
                     emit(DataState.Success(true))
                 }
             }
@@ -49,7 +50,10 @@ class MainRepository constructor(
                                     active = districtEntry.value.active,
                                     confirmed = districtEntry.value.confirmed,
                                     deceased = districtEntry.value.deceased,
-                                    recovered = districtEntry.value.recovered
+                                    recovered = districtEntry.value.recovered,
+                                    deltaconfirmed = districtEntry.value.delta.confirmed,
+                                    deltarecovered = districtEntry.value.delta.recovered,
+                                    deltadeaths = districtEntry.value.delta.deceased
                                 )
                             )
                         }
@@ -63,7 +67,13 @@ class MainRepository constructor(
         }
     }
 
-    fun getCasesSeriesData() = mainDao.getAllCasesSeries()
+    fun getCasesSeriesData(limit: Int): Flow<List<CasesSeries>> = flow {
+        if (limit == -1)
+            emit(mainDao.getAllCasesSeries())
+        else
+            emit(mainDao.getAllCasesSeries().takeLast(limit))
+    }
+
     fun getStateWiseData() = mainDao.getAllStateWise()
     fun getTotalData() = mainDao.getTotalData("TT")
     fun getDistrictByStateCode(code: String) = mainDao.getDistrictByStateCode(code)

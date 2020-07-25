@@ -77,7 +77,7 @@ class DistrictFragment : Fragment(R.layout.fragment_district) {
 
     private fun initRecycleView() {
         recycleView.layoutManager = LinearLayoutManager(requireContext())
-        recycleView.addItemDecoration(VerticalSpacingItemDecoration(30))
+        recycleView.addItemDecoration(VerticalSpacingItemDecoration(40))
         recycleView.adapter = adapter
     }
 
