@@ -21,3 +21,7 @@ fun String.dateTimeFormat(): String {
     }
     return "No Date Time"
 }
+
+fun String.color(color: String): String {
+    return "<font color=$color>$this</font>"
+}

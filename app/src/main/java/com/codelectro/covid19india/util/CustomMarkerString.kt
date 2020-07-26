@@ -25,6 +25,6 @@ class CustomMarkerString(
     }
 
     override fun getOffsetForDrawingAtPoint(xpos: Float, ypos: Float): MPPointF {
-        return MPPointF(-width / 1.3f, -height - 5f)
+        return MPPointF(-width / 2f, -height - 10f)
     }
 }

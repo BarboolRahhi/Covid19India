@@ -1,4 +1,4 @@
-package com.codelectro.covid19india.ui.main.state
+package com.codelectro.covid19india.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,7 +23,9 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.state_item, parent, false)
-        return StateViewHolder(view)
+        return StateViewHolder(
+            view
+        )
     }
 
     override fun getItemCount(): Int {

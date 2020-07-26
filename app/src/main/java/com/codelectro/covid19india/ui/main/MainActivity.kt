@@ -3,11 +3,12 @@ package com.codelectro.covid19india.ui.main
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
+import androidx.core.text.HtmlCompat
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.codelectro.covid19india.R
 import com.codelectro.covid19india.ui.MainViewModel
+import com.codelectro.covid19india.ui.color
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -25,6 +26,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val title = "Covid19".color("#1530A5") + ".India".color("#FFC107")
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        toolbar_title.text = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY);
         setUpNavigation()
 
     }

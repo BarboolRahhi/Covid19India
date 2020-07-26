@@ -19,13 +19,31 @@ interface MainDao {
     suspend fun insertAllDistricts(districts: List<District>)
 
     @Query("SELECT * FROM districts WHERE statecode = :code ORDER BY confirmed DESC")
-    fun getDistrictByStateCode(code: String): LiveData<List<District>>
+    suspend fun getDistrictByStateCodeAndConfirmed(code: String): List<District>
+
+    @Query("SELECT * FROM districts WHERE statecode = :code ORDER BY active DESC")
+    suspend fun getDistrictByStateCodeAndActive(code: String): List<District>
+
+    @Query("SELECT * FROM districts WHERE statecode = :code ORDER BY recovered DESC")
+    suspend fun getDistrictByStateCodeAndRecovered(code: String): List<District>
+
+    @Query("SELECT * FROM districts WHERE statecode = :code ORDER BY deceased DESC")
+    suspend fun getDistrictByStateCodeAndDeaths(code: String): List<District>
 
     @Query("SELECT * FROM cases_series")
     suspend fun getAllCasesSeries(): List<CasesSeries>
 
     @Query("SELECT * FROM state_wise WHERE statecode != 'TT' ORDER BY confirmed DESC")
-    fun getAllStateWise(): LiveData<List<StateWise>>
+    suspend fun getAllStateWiseByConfirmed(): List<StateWise>
+
+    @Query("SELECT * FROM state_wise WHERE statecode != 'TT' ORDER BY active DESC")
+    suspend fun getAllStateWiseByActive(): List<StateWise>
+
+    @Query("SELECT * FROM state_wise WHERE statecode != 'TT' ORDER BY recovered DESC")
+    suspend fun getAllStateWiseByRecovered(): List<StateWise>
+
+    @Query("SELECT * FROM state_wise WHERE statecode != 'TT' ORDER BY deaths DESC")
+    suspend fun getAllStateWiseByDeaths(): List<StateWise>
 
     @Query("SELECT * FROM state_wise WHERE statecode = :code")
     fun getTotalData(code: String): LiveData<StateWise?>

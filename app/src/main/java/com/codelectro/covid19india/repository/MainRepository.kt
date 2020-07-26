@@ -3,7 +3,9 @@ package com.codelectro.covid19india.repository
 import com.codelectro.covid19india.db.MainDao
 import com.codelectro.covid19india.entity.CasesSeries
 import com.codelectro.covid19india.entity.District
+import com.codelectro.covid19india.entity.StateWise
 import com.codelectro.covid19india.network.MainApi
+import com.codelectro.covid19india.util.CaseSort
 import com.codelectro.covid19india.util.DataState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -74,8 +76,23 @@ class MainRepository constructor(
             emit(mainDao.getAllCasesSeries().takeLast(limit))
     }
 
-    fun getStateWiseData() = mainDao.getAllStateWise()
+    fun getStateWiseData(caseSort: CaseSort): Flow<List<StateWise>> = flow {
+        when (caseSort) {
+            CaseSort.CONFIRMED -> emit(mainDao.getAllStateWiseByConfirmed())
+            CaseSort.ACTIVE ->  emit(mainDao.getAllStateWiseByActive())
+            CaseSort.RECOVERED ->  emit(mainDao.getAllStateWiseByRecovered())
+            CaseSort.DEATHS ->  emit(mainDao.getAllStateWiseByDeaths())
+        }
+    }
+
     fun getTotalData() = mainDao.getTotalData("TT")
-    fun getDistrictByStateCode(code: String) = mainDao.getDistrictByStateCode(code)
+    fun getDistrictByStateCode(code: String, caseSort: CaseSort): Flow<List<District>> = flow {
+        when (caseSort) {
+            CaseSort.CONFIRMED -> emit(mainDao.getDistrictByStateCodeAndConfirmed(code))
+            CaseSort.ACTIVE ->  emit(mainDao.getDistrictByStateCodeAndActive(code))
+            CaseSort.RECOVERED ->  emit(mainDao.getDistrictByStateCodeAndRecovered(code))
+            CaseSort.DEATHS ->  emit(mainDao.getDistrictByStateCodeAndDeaths(code))
+        }
+    }
 
 }

@@ -1,14 +1,12 @@
-package com.codelectro.covid19india.ui.main.state
+package com.codelectro.covid19india.ui.main.district
 
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codelectro.covid19india.R
-import com.codelectro.covid19india.adapters.StateRecyclerAdapter
-import com.codelectro.covid19india.entity.StateWise
+import com.codelectro.covid19india.adapters.DistrictRecyclerAdapter
 import com.codelectro.covid19india.exception.NoInternetException
 import com.codelectro.covid19india.ui.MainViewModel
 import com.codelectro.covid19india.ui.main.MainActivity
@@ -18,19 +16,25 @@ import com.codelectro.covid19india.util.DataState
 import com.codelectro.covid19india.util.VerticalSpacingItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_state.*
+import kotlinx.android.synthetic.main.fragment_district.*
 import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class StateFragment : Fragment(R.layout.fragment_state) {
+class DistrictFragment : Fragment(R.layout.fragment_district) {
+
+    companion object {
+        private const val TAG = "StateFragment"
+    }
 
     private lateinit var viewModel: MainViewModel
 
     @Inject
-    lateinit var adapter: StateRecyclerAdapter
-
+    lateinit var adapter: DistrictRecyclerAdapter
     private var menu: Menu? = null
+
+    var stateCode: String = ""
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,16 +48,22 @@ class StateFragment : Fragment(R.layout.fragment_state) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val navController = Navigation.findNavController(view)
         viewModel = (activity as MainActivity).viewModel
+
         initRecycleView()
 
-        viewModel.covidDataState.observe(viewLifecycleOwner, Observer { dataState ->
+        arguments?.let {
+            val args =
+                DistrictFragmentArgs.fromBundle(
+                    requireArguments()
+                )
+            stateCode = args.name
+        }
+
+        viewModel.districtDataState.observe(viewLifecycleOwner, Observer { dataState ->
             when (dataState) {
                 is DataState.Success -> {
                     Timber.d("Data: ${dataState.data}")
-                    subscribeObserver()
                     showProgressBar(false)
                 }
                 is DataState.Error -> {
@@ -63,27 +73,22 @@ class StateFragment : Fragment(R.layout.fragment_state) {
                             dataState.exception.message?.let { requireContext().showToast(it) }
                         }
                     }
-                    subscribeObserver()
                     showProgressBar(false)
                 }
-                DataState.Loading ->{
-                    showProgressBar(true)
+                DataState.Loading -> {
                     Timber.d("Data: Loading")
+                    showProgressBar(true)
                 }
             }
         })
 
-        adapter.setOnClickItemListener(object : StateRecyclerAdapter.ClickListener {
-            override fun onClick(view: View, state: StateWise) {
-                val action = StateFragmentDirections.actionStateToDistrictFragment(state.statecode)
-                navController.navigate(action)
-            }
-        })
-
+        observeSubscriber()
     }
 
-    private fun subscribeObserver() {
-        viewModel.stateWise.observe(viewLifecycleOwner, Observer {
+    private fun observeSubscriber() {
+        viewModel.getDistrictByStateCode(stateCode, CaseSort.CONFIRMED)
+        viewModel.districts.observe(requireActivity(), Observer {
+            Timber.d("district: $it")
             adapter.setStateList(it)
         })
     }
@@ -91,14 +96,13 @@ class StateFragment : Fragment(R.layout.fragment_state) {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.toolbar_menu, menu)
-        this.menu = menu
         menu.getItem(0)?.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.sort -> {
-               showSortDialog()
+                showSortDialog()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -112,22 +116,22 @@ class StateFragment : Fragment(R.layout.fragment_state) {
             .setSingleChoiceItems(items, viewModel.checkedItem) { dialog, which ->
                 when(which) {
                     0 -> {
-                        viewModel.getStateWiseData(CaseSort.CONFIRMED)
+                        viewModel.getDistrictByStateCode(stateCode, CaseSort.CONFIRMED)
                         viewModel.checkedItem = 0
                         dialog.cancel()
                     }
                     1 -> {
-                        viewModel.getStateWiseData(CaseSort.ACTIVE)
+                        viewModel.getDistrictByStateCode(stateCode, CaseSort.ACTIVE)
                         viewModel.checkedItem = 1
                         dialog.cancel()
                     }
                     2 -> {
-                        viewModel.getStateWiseData(CaseSort.RECOVERED)
+                        viewModel.getDistrictByStateCode(stateCode, CaseSort.RECOVERED)
                         viewModel.checkedItem = 2
                         dialog.cancel()
                     }
                     3 -> {
-                        viewModel.getStateWiseData(CaseSort.DEATHS)
+                        viewModel.getDistrictByStateCode(stateCode, CaseSort.DEATHS)
                         viewModel.checkedItem = 3
                         dialog.cancel()
                     }
@@ -143,13 +147,15 @@ class StateFragment : Fragment(R.layout.fragment_state) {
         recycleView.adapter = adapter
     }
 
-
     private fun showProgressBar(isVisible: Boolean) {
         progress_bar.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
     }
+
 
     override fun onStop() {
         super.onStop()
         viewModel.checkedItem = 0
     }
+
+
 }

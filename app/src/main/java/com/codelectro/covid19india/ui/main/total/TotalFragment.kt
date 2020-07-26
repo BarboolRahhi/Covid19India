@@ -51,6 +51,11 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
 
         viewModel = (activity as MainActivity).viewModel
 
+        setUpAllLineGraph()
+        setUpConfirmedLineGraph()
+        setUpRecoveredLineGraph()
+        setUpDeathsLineGraph()
+
         viewModel.covidDataState.observe(viewLifecycleOwner, Observer { dataState ->
             when (dataState) {
                 is DataState.Success -> {
@@ -146,7 +151,34 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
 
         })
 
-        setUpAllLineGraph()
+        viewModel.getCasesSeriesData(30)
+        toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            when (group.checkedButtonId) {
+                R.id.beginning -> {
+                    setGraphZoomIn()
+                    hideGraphMarker()
+                    viewModel.getCasesSeriesData(-1)
+                }
+                R.id.month -> {
+                    setGraphZoomIn()
+                    hideGraphMarker()
+                    viewModel.getCasesSeriesData(30)
+                }
+                R.id.week -> {
+                    setGraphZoomIn()
+                    hideGraphMarker()
+                    viewModel.getCasesSeriesData(14)
+                }
+            }
+        }
+
+    }
+
+    private fun hideGraphMarker() {
+        lineChart.highlightValue(null)
+        confirmedLineChart.highlightValue(null)
+        recoveredLineChart.highlightValue(null)
+        deathLineChart.highlightValue(null)
     }
 
     private fun isTogetherGraph(isVisible: Boolean) {
@@ -166,26 +198,6 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
                 setUI(it)
             }
         })
-
-        viewModel.getCasesSeriesData(30)
-        toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            when (group.checkedButtonId) {
-                R.id.beginning -> {
-                    setGraphZoomIn()
-                    viewModel.getCasesSeriesData(-1)
-                }
-                R.id.month -> {
-                    setGraphZoomIn()
-                    viewModel.getCasesSeriesData(30)
-                }
-                R.id.week -> {
-                    setGraphZoomIn()
-                    viewModel.getCasesSeriesData(14)
-                }
-            }
-
-        }
-
 
         viewModel.casesSeries.observe(viewLifecycleOwner, Observer {
             Timber.d("Data: CasesSerises $it")
@@ -219,6 +231,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             description.text = "Days"
             setNoDataText("No Data Yet!")
             animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
+            legend.textColor = getColor(requireContext(), R.color.colorPrimary)
         }
         lineChart.xAxis.apply {
             labelRotationAngle = 0f
@@ -244,18 +257,71 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             description.text = "Days"
             setNoDataText("No Data Yet!")
             animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
+            legend.textColor = getColor(requireContext(), R.color.colorBlueSky)
         }
         confirmedLineChart.xAxis.apply {
             labelRotationAngle = 0f
             position = XAxis.XAxisPosition.BOTTOM
             setDrawGridLines(false)
-            textColor = R.color.colorPrimary
+            textColor = getColor(requireContext(), R.color.colorBlueSky)
         }
 
         confirmedLineChart.axisLeft.isEnabled = false
 
         confirmedLineChart.axisRight.apply {
-            textColor = R.color.colorPrimary
+            textColor = getColor(requireContext(), R.color.colorBlueSky)
+            valueFormatter = LargeValueFormatter()
+            setDrawGridLines(false)
+        }
+    }
+
+    private fun setUpRecoveredLineGraph() {
+        recoveredLineChart.apply {
+            setExtraOffsets(24f, 6f, 12f, 0f)
+            setTouchEnabled(true)
+            setPinchZoom(true)
+            description.text = "Days"
+            setNoDataText("No Data Yet!")
+            animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
+            legend.textColor = getColor(requireContext(), R.color.colorGreen)
+        }
+        recoveredLineChart.xAxis.apply {
+            labelRotationAngle = 0f
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            textColor = getColor(requireContext(), R.color.colorGreen)
+        }
+
+        recoveredLineChart.axisLeft.isEnabled = false
+
+        recoveredLineChart.axisRight.apply {
+            textColor = getColor(requireContext(), R.color.colorGreen)
+            valueFormatter = LargeValueFormatter()
+            setDrawGridLines(false)
+        }
+    }
+
+    private fun setUpDeathsLineGraph() {
+        deathLineChart.apply {
+            setExtraOffsets(24f, 6f, 12f, 0f)
+            setTouchEnabled(true)
+            setPinchZoom(true)
+            description.text = "Days"
+            setNoDataText("No Data Yet!")
+            animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
+            legend.textColor = getColor(requireContext(), R.color.colorRed)
+        }
+        deathLineChart.xAxis.apply {
+            labelRotationAngle = 0f
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            textColor = getColor(requireContext(), R.color.colorRed)
+        }
+
+        deathLineChart.axisLeft.isEnabled = false
+
+        deathLineChart.axisRight.apply {
+            textColor = getColor(requireContext(), R.color.colorRed)
             valueFormatter = LargeValueFormatter()
             setDrawGridLines(false)
         }
@@ -319,47 +385,40 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         } else {
 
             set1 = LineDataSet(confirmedEntries, "Confirmed")
-            set1. axisDependency = AxisDependency.RIGHT
+            set1.axisDependency = AxisDependency.RIGHT
             set1.setDrawValues(false)
-            set1. setDrawFilled(true)
-            set1. color = getColor(requireContext(), R.color.colorAlpha60BlueSky)
+            set1.setDrawFilled(true)
+            set1.color = getColor(requireContext(), R.color.colorAlpha60BlueSky)
             set1.setCircleColor(getColor(requireContext(), R.color.colorBlueSky))
-            set1. lineWidth = 3f
+            set1.lineWidth = 3f
             set1.fillColor = getColor(requireContext(), R.color.colorBlueSky)
             set1.fillAlpha = 30
             set1.setDrawCircleHole(false)
 
-
-            // create a dataset and give it a type
             set2 = LineDataSet(recoveredEntries, "Recovered")
             set2.axisDependency = AxisDependency.RIGHT
             set2.setDrawValues(false)
             set2.setDrawFilled(true)
-            set2.color = Color.parseColor("#6028a745")
-            set2.setCircleColor(Color.parseColor("#28a745"))
+            set2.color = getColor(requireContext(), R.color.colorAlpha60Green)
+            set2.setCircleColor(getColor(requireContext(), R.color.colorAlpha60Green))
             set2.lineWidth = 3f
-            set2.fillColor = Color.parseColor("#28a745")
+            set2.fillColor = getColor(requireContext(), R.color.colorAlpha60Green)
             set2.fillAlpha = 30
             set2.setDrawCircleHole(false)
-
 
             set3 = LineDataSet(deathEntries, "Deaths")
             set3.axisDependency = AxisDependency.RIGHT
             set3.setDrawValues(false)
             set3.setDrawFilled(true)
-            set3.color = Color.parseColor("#60e23129")
-            set3.setCircleColor(Color.parseColor("#e23129"))
+            set3.color =  getColor(requireContext(), R.color.colorAlpha60Red)
+            set3.setCircleColor( getColor(requireContext(), R.color.colorRed))
             set3.lineWidth = 3f
-            set3.fillColor = Color.parseColor("#e23129")
+            set3.fillColor =  getColor(requireContext(), R.color.colorRed)
             set3.fillAlpha = 30
             set3.setDrawCircleHole(false)
 
             // create a data object with the data sets
             val data = LineData(set1, set2, set3)
-            // data.setValueTextColor(Color.WHITE)
-            // data.setValueTextSize(9f)
-            data.setDrawValues(false)
-
             // set data
             lineChart.data = data
         }
@@ -375,47 +434,26 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             confirmedEntries.add(Entry(index.toFloat(), casesSeries.totalconfirmed.toFloat()))
         }
 
-        confirmedLineChart.setExtraOffsets(12f, 6f, 12f, 0f)
 
-        confirmedLineChart.xAxis.labelRotationAngle = 0f
-        confirmedLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         confirmedLineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
-
-        confirmedLineChart.legend.textColor = Color.parseColor("#62aeff")
-
-        confirmedLineChart.xAxis.setDrawGridLines(false)
-        confirmedLineChart.xAxis.textColor = Color.parseColor("#62aeff")
-
-        confirmedLineChart.axisLeft.textColor = Color.parseColor("#62aeff")
-        confirmedLineChart.axisLeft.setDrawGridLines(false)
-        confirmedLineChart.axisLeft.valueFormatter = LargeValueFormatter()
-
-        confirmedLineChart.axisRight.isEnabled = false
-
-        confirmedLineChart.setTouchEnabled(true)
-        confirmedLineChart.setPinchZoom(true)
-
-        confirmedLineChart.description.text = "Days"
-        confirmedLineChart.setNoDataText("No Data yet!")
-
-        confirmedLineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
         val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         confirmedLineChart.marker = markerView
 
-        val vl: LineDataSet
+        val set1: LineDataSet
+        set1 = LineDataSet(confirmedEntries, "Confirmed")
+        set1.axisDependency = AxisDependency.RIGHT
+        set1.setDrawValues(false)
+        set1.setDrawFilled(true)
+        set1.color = getColor(requireContext(), R.color.colorAlpha60BlueSky)
+        set1.setCircleColor(getColor(requireContext(), R.color.colorBlueSky))
+        set1.lineWidth = 3f
+        set1.fillColor = getColor(requireContext(), R.color.colorBlueSky)
+        set1.fillAlpha = 30
+        set1.setDrawCircleHole(false)
 
-        vl = LineDataSet(confirmedEntries, "Confirmed Cases")
-        vl.setDrawValues(false)
-        vl.setDrawFilled(true)
-        vl.color = Color.parseColor("#6062aeff")
-        vl.setCircleColor(Color.parseColor("#62aeff"))
-        vl.lineWidth = 3f
-        vl.fillColor = Color.parseColor("#62aeff")
-        vl.fillAlpha = 30
-        vl.setDrawCircleHole(false)
 
-        confirmedLineChart.data = LineData(vl)
+        confirmedLineChart.data = LineData(set1)
         confirmedLineChart.invalidate()
 
     }
@@ -430,49 +468,25 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             recoveredEntries.add(Entry(index.toFloat(), casesSeries.totalrecovered.toFloat()))
         }
 
-
-        val vl = LineDataSet(recoveredEntries, "Recovered Cases")
-
-        vl.setDrawValues(false)
-        vl.setDrawFilled(true)
-        vl.color = Color.parseColor("#6028a745")
-        vl.setCircleColor(Color.parseColor("#28a745"))
-        vl.lineWidth = 3f
-        vl.fillColor = Color.parseColor("#28a745")
-        vl.fillAlpha = 30
-        vl.setDrawCircleHole(false)
-
-        recoveredLineChart.setExtraOffsets(12f, 6f, 12f, 0f)
-
-        recoveredLineChart.xAxis.labelRotationAngle = 0f
-        recoveredLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         recoveredLineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
-
-        recoveredLineChart.legend.textColor = Color.parseColor("#28a745")
-
-        recoveredLineChart.xAxis.setDrawGridLines(false)
-        recoveredLineChart.xAxis.textColor = Color.parseColor("#28a745")
-
-        recoveredLineChart.axisLeft.textColor = Color.parseColor("#28a745")
-        recoveredLineChart.axisLeft.setDrawGridLines(false)
-
-        recoveredLineChart.axisLeft.valueFormatter = LargeValueFormatter()
-
-        recoveredLineChart.data = LineData(vl)
-
-        recoveredLineChart.axisRight.isEnabled = false
-
-        recoveredLineChart.setTouchEnabled(true)
-        recoveredLineChart.setPinchZoom(true)
-
-        recoveredLineChart.description.text = "Days"
-        recoveredLineChart.setNoDataText("No Data yet!")
-
-        recoveredLineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
         val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         recoveredLineChart.marker = markerView
 
+        val set2: LineDataSet
+        set2 = LineDataSet(recoveredEntries, "Recovered")
+        set2.axisDependency = AxisDependency.RIGHT
+        set2.setDrawValues(false)
+        set2.setDrawFilled(true)
+        set2.color = getColor(requireContext(), R.color.colorAlpha60Green)
+        set2.setCircleColor(getColor(requireContext(), R.color.colorAlpha60Green))
+        set2.lineWidth = 3f
+        set2.fillColor = getColor(requireContext(), R.color.colorAlpha60Green)
+        set2.fillAlpha = 30
+        set2.setDrawCircleHole(false)
+
+        recoveredLineChart.data = LineData(set2)
+        recoveredLineChart.invalidate()
     }
 
     private fun setDeathGraphData(graphDataList: List<CasesSeries>) {
@@ -484,48 +498,23 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             deathEntries.add(Entry(index.toFloat(), casesSeries.totaldeceased.toFloat()))
         }
 
-
-        val vl = LineDataSet(deathEntries, "Death Cases")
-
-        vl.setDrawValues(false)
-        vl.setDrawFilled(true)
-        vl.color = Color.parseColor("#60e23129")
-        vl.setCircleColor(Color.parseColor("#e23129"))
-        vl.lineWidth = 3f
-        vl.fillColor = Color.parseColor("#e23129")
-        vl.fillAlpha = 30
-        vl.setDrawCircleHole(false)
-
-        deathLineChart.setExtraOffsets(12f, 6f, 12f, 0f)
-
-        deathLineChart.xAxis.labelRotationAngle = 0f
-        deathLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         deathLineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
-
-        deathLineChart.legend.textColor = Color.parseColor("#e23129")
-
-        deathLineChart.xAxis.setDrawGridLines(false)
-        deathLineChart.xAxis.textColor = Color.parseColor("#e23129")
-
-        deathLineChart.axisLeft.textColor = Color.parseColor("#e23129")
-        deathLineChart.axisLeft.setDrawGridLines(false)
-
-        deathLineChart.axisLeft.valueFormatter = LargeValueFormatter()
-
-        deathLineChart.data = LineData(vl)
-
-        deathLineChart.axisRight.isEnabled = false
-
-        deathLineChart.setTouchEnabled(true)
-        deathLineChart.setPinchZoom(true)
-
-        deathLineChart.description.text = "Days"
-        deathLineChart.setNoDataText("No Data yet!")
-
-        deathLineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
-
         val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         deathLineChart.marker = markerView
+
+        val set3: LineDataSet
+        set3 = LineDataSet(deathEntries, "Deaths")
+        set3.axisDependency = AxisDependency.RIGHT
+        set3.setDrawValues(false)
+        set3.setDrawFilled(true)
+        set3.color =  getColor(requireContext(), R.color.colorAlpha60Red)
+        set3.setCircleColor( getColor(requireContext(), R.color.colorRed))
+        set3.lineWidth = 3f
+        set3.fillColor =  getColor(requireContext(), R.color.colorRed)
+        set3.fillAlpha = 30
+        set3.setDrawCircleHole(false)
+
+        deathLineChart.data = LineData(set3)
 
     }
 

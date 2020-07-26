@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/districtFragment"
-        android:name="com.codelectro.covid19india.ui.main.state.DistrictFragment"
+        android:name="com.codelectro.covid19india.ui.main.district.DistrictFragment"
         android:label="DistrictFragment"
         tools:layout="@layout/fragment_district">
         <argument

@@ -6,7 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codelectro.covid19india.entity.CasesSeries
+import com.codelectro.covid19india.entity.District
+import com.codelectro.covid19india.entity.StateWise
 import com.codelectro.covid19india.repository.MainRepository
+import com.codelectro.covid19india.util.CaseSort
 import com.codelectro.covid19india.util.DataState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -18,6 +21,8 @@ import javax.inject.Singleton
 class MainViewModel @ViewModelInject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
+
+    var checkedItem = 0
 
     private val _covidDataSource: MutableLiveData<DataState<Boolean>> = MutableLiveData()
     val covidDataState: LiveData<DataState<Boolean>>
@@ -31,12 +36,21 @@ class MainViewModel @ViewModelInject constructor(
     val casesSeries: LiveData<List<CasesSeries>>
         get() = _caseseries
 
+    private val _stateWise: MutableLiveData<List<StateWise>> = MutableLiveData()
+    val stateWise: LiveData<List<StateWise>>
+        get() = _stateWise
+
+    private val _districts: MutableLiveData<List<District>> = MutableLiveData()
+    val districts: LiveData<List<District>>
+        get() = _districts
+
     init {
         setCovidData()
         setDistrictData()
+        getStateWiseData(CaseSort.CONFIRMED)
     }
 
-    fun setCovidData() {
+    private fun setCovidData() {
         viewModelScope.launch {
             repository.setCovidData()
                 .onEach { dataState ->
@@ -51,8 +65,7 @@ class MainViewModel @ViewModelInject constructor(
             repository.setDistrictData()
                 .onEach { dataState ->
                     _districtDataSource.value = dataState
-                }
-                .launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
         }
     }
 
@@ -61,11 +74,28 @@ class MainViewModel @ViewModelInject constructor(
             repository.getCasesSeriesData(limit)
                 .onEach {
                     _caseseries.value = it
-                }
-                .launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
         }
     }
-    fun getStateWiseData() = repository.getStateWiseData()
+
+    fun getStateWiseData(caseSort: CaseSort) {
+        viewModelScope.launch {
+            repository.getStateWiseData(caseSort)
+                .onEach {
+                    _stateWise.value = it
+                }.launchIn(viewModelScope)
+        }
+    }
+
+    fun getDistrictByStateCode(code: String, caseSort: CaseSort) {
+        viewModelScope.launch {
+            repository.getDistrictByStateCode(code, caseSort)
+                .onEach {
+                    _districts.value = it
+                }.launchIn(viewModelScope)
+        }
+    }
+
     fun getTotalData() = repository.getTotalData()
-    fun getDistrictByStateCode(code: String) = repository.getDistrictByStateCode(code)
+
 }
