@@ -12,18 +12,22 @@
     <color name="colorBlueSky">#62aeff</color>
     <color name="colorAlpha20BlueSky">#2062aeff</color>
     <color name="colorAlpha90BlueSky">#9062aeff</color>
+    <color name="colorAlpha60BlueSky">#6062aeff</color>
 
     <color name="colorGreen">#28a745</color>
     <color name="colorAlpha20Green">#2028a745</color>
     <color name="colorAlpha90Green">#9028a745</color>
+    <color name="colorAlpha60Green">#6028a745</color>
 
     <color name="colorRed">#e23129</color>
     <color name="colorAlpha20Red">#20e23129</color>
     <color name="colorAlpha90Red">#90e23129</color>
+    <color name="colorAlpha60Red">#60e23129</color>
 
     <color name="colorGold">#ffce47</color>
     <color name="colorAlpha20Gold">#20ffce47</color>
     <color name="colorAlpha90Gold">#90ffce47</color>
 
+    <color name="colorDarkBlack">#161625</color>
 
 </resources>

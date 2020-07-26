@@ -9,12 +9,16 @@ import kotlin.collections.ArrayList
 
 
 class GraphDateValueStringFormatter(
-    val array: ArrayList<String>
+    private val array: ArrayList<String>
 ) : ValueFormatter() {
 
     override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+        return try {
+            array[value.toInt()]
+        } catch (e: Exception) {
+            ""
+        }
 
-        return array[value.toInt()]
     }
 
 }

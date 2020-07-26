@@ -1,11 +1,10 @@
 package com.codelectro.covid19india.ui.main.total
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.TabHost
-import androidx.annotation.RequiresApi
+import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.codelectro.covid19india.R
@@ -17,26 +16,24 @@ import com.codelectro.covid19india.ui.dateTimeFormat
 import com.codelectro.covid19india.ui.formatNumber
 import com.codelectro.covid19india.ui.main.MainActivity
 import com.codelectro.covid19india.ui.showToast
-import com.codelectro.covid19india.util.*
 import com.codelectro.covid19india.util.Constants.Companion.GRAPH_ANIMATION_DURATION
+import com.codelectro.covid19india.util.CustomMarkerString
+import com.codelectro.covid19india.util.DataState
+import com.codelectro.covid19india.util.GraphDateValueStringFormatter
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
-import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.LargeValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_total.*
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
@@ -78,6 +75,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             }
         })
 
+        // tablayout
         isTogetherGraph(true)
         isIndividualGraph(false)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -90,14 +88,56 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                requireContext().showToast(""+tab?.position)
-                when(tab?.position) {
+                when (tab?.position) {
                     0 -> {
+                        val animin =
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)
+                        val animout =
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_right)
+                        animin.duration = 400
+                        animout.duration = 400
+
+                        linear1.animation = animin
+                        linear1.animate()
+
+                        linear4.animation = animout
+                        linear4.animate()
+
+                        linear3.animation = animout
+                        linear3.animate()
+
+                        linear2.animation = animout
+                        linear2.animate()
+
+                        animin.start()
+                        animout.start()
                         isTogetherGraph(true)
                         isIndividualGraph(false)
                     }
                     1 -> {
+                        val anim =
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left)
 
+                        val animout =
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_right)
+
+                        anim.duration = 400
+                        linear1.animation = anim
+
+                        linear1.animate()
+
+                        animout.duration = 400
+
+                        linear4.animation = animout
+                        linear4.animate()
+
+                        linear3.animation = animout
+                        linear3.animate()
+
+                        linear2.animation = animout
+                        linear2.animate()
+                        anim.start()
+                        animout.start()
                         isTogetherGraph(false)
                         isIndividualGraph(true)
                     }
@@ -106,6 +146,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
 
         })
 
+        setUpAllLineGraph()
     }
 
     private fun isTogetherGraph(isVisible: Boolean) {
@@ -130,12 +171,15 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
             when (group.checkedButtonId) {
                 R.id.beginning -> {
+                    setGraphZoomIn()
                     viewModel.getCasesSeriesData(-1)
                 }
                 R.id.month -> {
+                    setGraphZoomIn()
                     viewModel.getCasesSeriesData(30)
                 }
                 R.id.week -> {
+                    setGraphZoomIn()
                     viewModel.getCasesSeriesData(14)
                 }
             }
@@ -153,6 +197,70 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
 
     }
 
+    private fun setGraphZoomIn() {
+        lineChart.setScaleMinima(0f, 0f)
+        lineChart.fitScreen()
+
+        confirmedLineChart.setScaleMinima(0f, 0f)
+        confirmedLineChart.fitScreen()
+
+        recoveredLineChart.setScaleMinima(0f, 0f)
+        recoveredLineChart.fitScreen()
+
+        deathLineChart.setScaleMinima(0f, 0f)
+        deathLineChart.fitScreen()
+    }
+
+    private fun setUpAllLineGraph() {
+        lineChart.apply {
+            setExtraOffsets(24f, 6f, 12f, 0f)
+            setTouchEnabled(true)
+            setPinchZoom(true)
+            description.text = "Days"
+            setNoDataText("No Data Yet!")
+            animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
+        }
+        lineChart.xAxis.apply {
+            labelRotationAngle = 0f
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            textColor = R.color.colorPrimary
+        }
+
+        lineChart.axisLeft.isEnabled = false
+
+        lineChart.axisRight.apply {
+            textColor = R.color.colorPrimary
+            valueFormatter = LargeValueFormatter()
+            setDrawGridLines(false)
+        }
+    }
+
+    private fun setUpConfirmedLineGraph() {
+        confirmedLineChart.apply {
+            setExtraOffsets(24f, 6f, 12f, 0f)
+            setTouchEnabled(true)
+            setPinchZoom(true)
+            description.text = "Days"
+            setNoDataText("No Data Yet!")
+            animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
+        }
+        confirmedLineChart.xAxis.apply {
+            labelRotationAngle = 0f
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            textColor = R.color.colorPrimary
+        }
+
+        confirmedLineChart.axisLeft.isEnabled = false
+
+        confirmedLineChart.axisRight.apply {
+            textColor = R.color.colorPrimary
+            valueFormatter = LargeValueFormatter()
+            setDrawGridLines(false)
+        }
+    }
+
     private fun setAllGraphData(graphDataList: List<CasesSeries>) {
 
         val confirmedEntries = ArrayList<Entry>()
@@ -167,32 +275,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             deathEntries.add(Entry(index.toFloat(), casesSeries.totaldeceased.toFloat()))
         }
 
-
-        lineChart.setExtraOffsets(12f, 6f, 12f, 0f)
-
-        lineChart.xAxis.labelRotationAngle = 0f
-        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         lineChart.xAxis.valueFormatter = GraphDateValueStringFormatter(monthsArray)
-
-        lineChart.legend.textColor = Color.parseColor("#1530A5")
-
-        lineChart.xAxis.setDrawGridLines(false)
-        lineChart.xAxis.textColor = Color.parseColor("#1530A5")
-
-        lineChart.axisLeft.textColor = Color.parseColor("#1530A5")
-        lineChart.axisLeft.setDrawGridLines(false)
-
-
-        lineChart.axisLeft.valueFormatter = LargeValueFormatter()
-
-        lineChart.axisRight.isEnabled = false
-        lineChart.setTouchEnabled(true)
-        lineChart.setPinchZoom(true)
-
-        lineChart.description.text = "Days"
-        lineChart.setNoDataText("No Data yet!")
-
-        lineChart.animateX(GRAPH_ANIMATION_DURATION, Easing.EaseInOutQuad)
 
         val markerView = CustomMarkerString(requireContext(), R.layout.custom_marker, monthsArray)
         lineChart.marker = markerView
@@ -218,7 +301,6 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             override fun onNothingSelected() {}
         })
 
-
         val set1: LineDataSet
         val set2: LineDataSet
         val set3: LineDataSet
@@ -235,15 +317,15 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             lineChart.data.notifyDataChanged()
             lineChart.notifyDataSetChanged()
         } else {
-            // create a dataset and give it a type
+
             set1 = LineDataSet(confirmedEntries, "Confirmed")
-            set1.axisDependency = AxisDependency.RIGHT
+            set1. axisDependency = AxisDependency.RIGHT
             set1.setDrawValues(false)
-            set1.setDrawFilled(true)
-            set1.color = Color.parseColor("#6062aeff")
-            set1.setCircleColor(Color.parseColor("#62aeff"))
-            set1.lineWidth = 3f
-            set1.fillColor = Color.parseColor("#62aeff")
+            set1. setDrawFilled(true)
+            set1. color = getColor(requireContext(), R.color.colorAlpha60BlueSky)
+            set1.setCircleColor(getColor(requireContext(), R.color.colorBlueSky))
+            set1. lineWidth = 3f
+            set1.fillColor = getColor(requireContext(), R.color.colorBlueSky)
             set1.fillAlpha = 30
             set1.setDrawCircleHole(false)
 
@@ -278,7 +360,6 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             // data.setValueTextSize(9f)
             data.setDrawValues(false)
 
-
             // set data
             lineChart.data = data
         }
@@ -309,8 +390,6 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         confirmedLineChart.axisLeft.setDrawGridLines(false)
         confirmedLineChart.axisLeft.valueFormatter = LargeValueFormatter()
 
-
-
         confirmedLineChart.axisRight.isEnabled = false
 
         confirmedLineChart.setTouchEnabled(true)
@@ -337,6 +416,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         vl.setDrawCircleHole(false)
 
         confirmedLineChart.data = LineData(vl)
+        confirmedLineChart.invalidate()
 
     }
 
@@ -455,9 +535,9 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
             activeCase.text = it.active.formatNumber()
             recoveredCase.text = it.recovered.formatNumber()
             deathCase.text = it.deaths.formatNumber()
-            deltaConfirmed.text = "+"+it.deltaconfirmed.formatNumber()
-            deltaRecovered.text = "+"+it.deltarecovered.formatNumber()
-            deltaDeaths.text = "+"+it.deltadeaths.formatNumber()
+            deltaConfirmed.text = "+" + it.deltaconfirmed.formatNumber()
+            deltaRecovered.text = "+" + it.deltarecovered.formatNumber()
+            deltaDeaths.text = "+" + it.deltadeaths.formatNumber()
             lastUpdateDate.text = "Last update date: " + it.lastupdatedtime!!.dateTimeFormat()
         }
 
