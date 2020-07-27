@@ -110,29 +110,28 @@ class DistrictFragment : Fragment(R.layout.fragment_district) {
 
     private fun showSortDialog() {
         val items = arrayOf("Confirmed", "Active", "Recovered", "Deaths")
-        viewModel.checkedItem
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Sort cases by:")
-            .setSingleChoiceItems(items, viewModel.checkedItem) { dialog, which ->
+            .setSingleChoiceItems(items, viewModel.districtCheckedItem) { dialog, which ->
                 when(which) {
                     0 -> {
                         viewModel.getDistrictByStateCode(stateCode, CaseSort.CONFIRMED)
-                        viewModel.checkedItem = 0
+                        viewModel.districtCheckedItem = 0
                         dialog.cancel()
                     }
                     1 -> {
                         viewModel.getDistrictByStateCode(stateCode, CaseSort.ACTIVE)
-                        viewModel.checkedItem = 1
+                        viewModel.districtCheckedItem = 1
                         dialog.cancel()
                     }
                     2 -> {
                         viewModel.getDistrictByStateCode(stateCode, CaseSort.RECOVERED)
-                        viewModel.checkedItem = 2
+                        viewModel.districtCheckedItem = 2
                         dialog.cancel()
                     }
                     3 -> {
                         viewModel.getDistrictByStateCode(stateCode, CaseSort.DEATHS)
-                        viewModel.checkedItem = 3
+                        viewModel.districtCheckedItem = 3
                         dialog.cancel()
                     }
                 }
@@ -149,12 +148,6 @@ class DistrictFragment : Fragment(R.layout.fragment_district) {
 
     private fun showProgressBar(isVisible: Boolean) {
         progress_bar.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
-    }
-
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.checkedItem = 0
     }
 
 

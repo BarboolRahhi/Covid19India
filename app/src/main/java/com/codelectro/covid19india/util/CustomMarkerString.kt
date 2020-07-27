@@ -1,6 +1,7 @@
 package com.codelectro.covid19india.util
 
 import android.content.Context
+import com.codelectro.covid19india.ui.formatNumber
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
@@ -19,7 +20,7 @@ class CustomMarkerString(
     override fun refreshContent(entry: Entry?, highlight: Highlight?) {
         val valueY = entry?.y?.toDouble() ?: 0.0
         val valueX = entry?.x ?: 0.0.toFloat()
-        val resText = "${array[valueX.toInt()]}\ncase: $valueY"
+        val resText = "${array[valueX.toInt()]}\ncase: ${valueY.toInt().formatNumber()}"
         tvValue.text = resText
         super.refreshContent(entry, highlight)
     }

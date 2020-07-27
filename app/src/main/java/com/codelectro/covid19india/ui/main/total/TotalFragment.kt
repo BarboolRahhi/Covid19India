@@ -152,7 +152,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
         })
 
         viewModel.getCasesSeriesData(30)
-        toggleButton.addOnButtonCheckedListener { group, checkedId, isChecked ->
+        toggleButton.addOnButtonCheckedListener { group, _, _ ->
             when (group.checkedButtonId) {
                 R.id.beginning -> {
                     setGraphZoomIn()
@@ -356,7 +356,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
                 for (j in 0 until lineChart.data.dataSets.size) {
                     val iDataSet: IDataSet<*> = lineChart.data.dataSets[j]
                     for (i in (iDataSet as LineDataSet).values.indices) {
-                        if ((iDataSet as LineDataSet).values[i].x == e.x) {
+                        if (iDataSet.values[i].x == e.x) {
                             highlight[j] = Highlight(e.x, e.y, j)
                         }
                     }
@@ -519,7 +519,7 @@ class TotalFragment : Fragment(R.layout.fragment_total) {
     }
 
     private fun setUI(total: StateWise) {
-        total?.let {
+        total.let {
             confirmedCase.text = it.confirmed.formatNumber()
             activeCase.text = it.active.formatNumber()
             recoveredCase.text = it.recovered.formatNumber()

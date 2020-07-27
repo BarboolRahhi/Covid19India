@@ -29,5 +29,6 @@
     <color name="colorAlpha90Gold">#90ffce47</color>
 
     <color name="colorDarkBlack">#161625</color>
+    <color name="colorDarkBlackAlpha">#90161625</color>
 
 </resources>

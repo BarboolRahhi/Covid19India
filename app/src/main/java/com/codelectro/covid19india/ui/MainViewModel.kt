@@ -22,7 +22,8 @@ class MainViewModel @ViewModelInject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
-    var checkedItem = 0
+    var stateCheckedItem = 0
+    var districtCheckedItem = 0
 
     private val _covidDataSource: MutableLiveData<DataState<Boolean>> = MutableLiveData()
     val covidDataState: LiveData<DataState<Boolean>>
@@ -47,7 +48,6 @@ class MainViewModel @ViewModelInject constructor(
     init {
         setCovidData()
         setDistrictData()
-        getStateWiseData(CaseSort.CONFIRMED)
     }
 
     private fun setCovidData() {

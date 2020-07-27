@@ -47,7 +47,7 @@ class StateRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         holder.itemView.setOnClickListener {
             Log.d(TAG, "onBindViewHolder: Adapter")
-            listener?.onClick(it,  list[position])
+            listener.onClick(it,  list[position])
         }
     }
 

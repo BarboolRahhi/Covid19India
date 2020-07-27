@@ -47,6 +47,7 @@ class StateFragment : Fragment(R.layout.fragment_state) {
 
         val navController = Navigation.findNavController(view)
         viewModel = (activity as MainActivity).viewModel
+        viewModel.districtCheckedItem = 0
         initRecycleView()
 
         viewModel.covidDataState.observe(viewLifecycleOwner, Observer { dataState ->
@@ -83,6 +84,12 @@ class StateFragment : Fragment(R.layout.fragment_state) {
     }
 
     private fun subscribeObserver() {
+        when(viewModel.stateCheckedItem) {
+            0 -> viewModel.getStateWiseData(CaseSort.CONFIRMED)
+            1 -> viewModel.getStateWiseData(CaseSort.ACTIVE)
+            2 -> viewModel.getStateWiseData(CaseSort.RECOVERED)
+            3 -> viewModel.getStateWiseData(CaseSort.DEATHS)
+        }
         viewModel.stateWise.observe(viewLifecycleOwner, Observer {
             adapter.setStateList(it)
         })
@@ -106,29 +113,28 @@ class StateFragment : Fragment(R.layout.fragment_state) {
 
     private fun showSortDialog() {
         val items = arrayOf("Confirmed", "Active", "Recovered", "Deaths")
-        viewModel.checkedItem
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Sort cases by:")
-            .setSingleChoiceItems(items, viewModel.checkedItem) { dialog, which ->
+            .setSingleChoiceItems(items, viewModel.stateCheckedItem) { dialog, which ->
                 when(which) {
                     0 -> {
                         viewModel.getStateWiseData(CaseSort.CONFIRMED)
-                        viewModel.checkedItem = 0
+                        viewModel.stateCheckedItem = 0
                         dialog.cancel()
                     }
                     1 -> {
                         viewModel.getStateWiseData(CaseSort.ACTIVE)
-                        viewModel.checkedItem = 1
+                        viewModel.stateCheckedItem = 1
                         dialog.cancel()
                     }
                     2 -> {
                         viewModel.getStateWiseData(CaseSort.RECOVERED)
-                        viewModel.checkedItem = 2
+                        viewModel.stateCheckedItem = 2
                         dialog.cancel()
                     }
                     3 -> {
                         viewModel.getStateWiseData(CaseSort.DEATHS)
-                        viewModel.checkedItem = 3
+                        viewModel.stateCheckedItem = 3
                         dialog.cancel()
                     }
                 }
@@ -138,6 +144,7 @@ class StateFragment : Fragment(R.layout.fragment_state) {
     }
 
     private fun initRecycleView() {
+        recycleView.isNestedScrollingEnabled = false
         recycleView.layoutManager = LinearLayoutManager(requireContext())
         recycleView.addItemDecoration(VerticalSpacingItemDecoration(40))
         recycleView.adapter = adapter
@@ -148,8 +155,5 @@ class StateFragment : Fragment(R.layout.fragment_state) {
         progress_bar.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
     }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.checkedItem = 0
-    }
+
 }

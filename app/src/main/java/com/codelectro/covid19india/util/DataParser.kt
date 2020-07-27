@@ -13,7 +13,7 @@ class DataParser : JsonDeserializer<States> {
         context: JsonDeserializationContext?
     ): States? {
 
-        var map: HashMap<String, DistrictData>? = null
+        var map: HashMap<String, DistrictData>?
 
         try {
              map = readServiceUrlMap(json?.asJsonObject)
