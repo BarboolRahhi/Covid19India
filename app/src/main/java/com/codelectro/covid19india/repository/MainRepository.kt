@@ -7,8 +7,8 @@ import com.codelectro.covid19india.entity.StateWise
 import com.codelectro.covid19india.network.MainApi
 import com.codelectro.covid19india.util.CaseSort
 import com.codelectro.covid19india.util.DataState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 class MainRepository constructor(
@@ -74,14 +74,16 @@ class MainRepository constructor(
             emit(mainDao.getAllCasesSeries())
         else
             emit(mainDao.getAllCasesSeries().takeLast(limit))
-    }
+    }.flowOn(Dispatchers.Default)
+
+
 
     fun getStateWiseData(caseSort: CaseSort): Flow<List<StateWise>> = flow {
         when (caseSort) {
             CaseSort.CONFIRMED -> emit(mainDao.getAllStateWiseByConfirmed())
-            CaseSort.ACTIVE ->  emit(mainDao.getAllStateWiseByActive())
-            CaseSort.RECOVERED ->  emit(mainDao.getAllStateWiseByRecovered())
-            CaseSort.DEATHS ->  emit(mainDao.getAllStateWiseByDeaths())
+            CaseSort.ACTIVE -> emit(mainDao.getAllStateWiseByActive())
+            CaseSort.RECOVERED -> emit(mainDao.getAllStateWiseByRecovered())
+            CaseSort.DEATHS -> emit(mainDao.getAllStateWiseByDeaths())
         }
     }
 
@@ -89,9 +91,9 @@ class MainRepository constructor(
     fun getDistrictByStateCode(code: String, caseSort: CaseSort): Flow<List<District>> = flow {
         when (caseSort) {
             CaseSort.CONFIRMED -> emit(mainDao.getDistrictByStateCodeAndConfirmed(code))
-            CaseSort.ACTIVE ->  emit(mainDao.getDistrictByStateCodeAndActive(code))
-            CaseSort.RECOVERED ->  emit(mainDao.getDistrictByStateCodeAndRecovered(code))
-            CaseSort.DEATHS ->  emit(mainDao.getDistrictByStateCodeAndDeaths(code))
+            CaseSort.ACTIVE -> emit(mainDao.getDistrictByStateCodeAndActive(code))
+            CaseSort.RECOVERED -> emit(mainDao.getDistrictByStateCodeAndRecovered(code))
+            CaseSort.DEATHS -> emit(mainDao.getDistrictByStateCodeAndDeaths(code))
         }
     }
 

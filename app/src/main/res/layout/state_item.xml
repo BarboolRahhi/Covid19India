@@ -17,12 +17,13 @@
         android:layout_height="match_parent"
         android:padding="8dp">
 
+
         <TextView
             android:id="@+id/textView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:fontFamily="@font/poppins_medium"
             android:text="Click to get more details about districts"
             android:textColor="#65645F"
@@ -33,13 +34,13 @@
 
         <TextView
             android:id="@+id/lastUpdateDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
-            android:text="Last Update Date:"
+            android:layout_marginEnd="12dp"
             android:fontFamily="@font/poppins_medium"
+            android:text="Last Update Date:"
             android:textColor="#65645F"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"

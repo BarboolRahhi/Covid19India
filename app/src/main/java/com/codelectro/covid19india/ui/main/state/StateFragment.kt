@@ -59,7 +59,7 @@ class StateFragment : Fragment(R.layout.fragment_state) {
                 }
                 is DataState.Error -> {
                     Timber.d("Data: ${dataState.exception.message}")
-                    when(dataState.exception) {
+                    when (dataState.exception) {
                         is NoInternetException -> {
                             dataState.exception.message?.let { requireContext().showToast(it) }
                         }
@@ -67,7 +67,7 @@ class StateFragment : Fragment(R.layout.fragment_state) {
                     subscribeObserver()
                     showProgressBar(false)
                 }
-                DataState.Loading ->{
+                DataState.Loading -> {
                     showProgressBar(true)
                     Timber.d("Data: Loading")
                 }
@@ -84,7 +84,7 @@ class StateFragment : Fragment(R.layout.fragment_state) {
     }
 
     private fun subscribeObserver() {
-        when(viewModel.stateCheckedItem) {
+        when (viewModel.stateCheckedItem) {
             0 -> viewModel.getStateWiseData(CaseSort.CONFIRMED)
             1 -> viewModel.getStateWiseData(CaseSort.ACTIVE)
             2 -> viewModel.getStateWiseData(CaseSort.RECOVERED)
@@ -103,9 +103,9 @@ class StateFragment : Fragment(R.layout.fragment_state) {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.sort -> {
-               showSortDialog()
+                showSortDialog()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -116,7 +116,7 @@ class StateFragment : Fragment(R.layout.fragment_state) {
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Sort cases by:")
             .setSingleChoiceItems(items, viewModel.stateCheckedItem) { dialog, which ->
-                when(which) {
+                when (which) {
                     0 -> {
                         viewModel.getStateWiseData(CaseSort.CONFIRMED)
                         viewModel.stateCheckedItem = 0

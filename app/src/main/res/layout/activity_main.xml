@@ -25,33 +25,14 @@
             android:layout_gravity="center"
             android:textSize="20sp" />
 
-<!--        <RelativeLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:gravity="center"-->
-<!--            >-->
-<!--          -->
-
-<!--            <TextView-->
-<!--                android:layout_toRightOf="@+id/covid"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:fontFamily="@font/poppins_bold"-->
-<!--                android:text=".India"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:textColor="@color/colorAccent"-->
-<!--                android:textSize="18sp"-->
-<!--                android:textStyle="bold" />-->
-<!--        </RelativeLayout>-->
-
     </androidx.appcompat.widget.Toolbar>
 
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

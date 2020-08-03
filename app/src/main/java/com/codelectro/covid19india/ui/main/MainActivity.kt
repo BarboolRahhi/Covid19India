@@ -11,6 +11,11 @@ import com.codelectro.covid19india.ui.MainViewModel
 import com.codelectro.covid19india.ui.color
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -33,6 +38,24 @@ class MainActivity : AppCompatActivity() {
         toolbar_title.text = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY);
         setUpNavigation()
 
+        flowExample()
+
+    }
+
+    private fun flowExample() {
+        val flowInt = mutableListOf(1,2,3,5,6,7,8,9,10).asFlow()
+
+        val result = flowInt
+            .dropWhile {
+                it < 7
+            }
+            .flowOn(Dispatchers.Default)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            result.collect {
+                Timber.d("Count: $it")
+            }
+        }
     }
 
     private fun setUpNavigation() {
